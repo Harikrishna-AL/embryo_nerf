@@ -13,13 +13,14 @@ positions = [
     [0, -5, 0],   # bottom view
     [-5, 0, 0],   # left view
 ]
-
+# while True:
 for i, pos in enumerate(positions):
-    plotter.camera_position = pos
+    # plotter.camera_position = pos
+    plotter.camera.position = pos
+    # plotter.camera_set = True
     camera = plotter.camera
     trans_matrix = camera.GetViewTransformMatrix()
     # trans_matrix = plotter.get_view_matrix()
     plotter.show(title=f"View {i+1}",screenshot=f"./generated_views/view{i+1}.png",interactive_update=True)
+    print(plotter.camera.position)
     print(trans_matrix)
-
-
