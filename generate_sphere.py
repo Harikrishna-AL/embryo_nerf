@@ -16,6 +16,10 @@ positions = [
 
 for i, pos in enumerate(positions):
     plotter.camera_position = pos
+    camera = plotter.camera
+    trans_matrix = camera.GetViewTransformMatrix()
+    # trans_matrix = plotter.get_view_matrix()
     plotter.show(title=f"View {i+1}",screenshot=f"./generated_views/view{i+1}.png",interactive_update=True)
+    print(trans_matrix)
 
 
