@@ -1,2 +1,2 @@
 # Nano NeRF 
-A nano implementation of NeRFs.
+A nano implementation of NeRFs especially to reconstruct embryos.
