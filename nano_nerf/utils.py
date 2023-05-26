@@ -65,3 +65,8 @@ def pos_encoding(tensor,num_functions,include_input = True,log_sample=True):
       return encoding[0]
   else:
       return torch.cat(encoding, dim=-1)
+
+def get_batches(points,chunksize=1024*8):
+  return [points[i:i + chunksize] for i in range(0,points.shape[0],chunksize)]
+
+  
