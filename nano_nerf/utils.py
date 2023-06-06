@@ -37,8 +37,18 @@ def compute_query_points(ray_directions,ray_origins,near,far,num_samples,random=
   query_points = ray_origins[...,None,:] + ray_directions[...,None,:]*depth_values[...,None,:]
   return query_points, depth_values
 
-def render_volume(rgb,density):
-  pass
+def render_volume(radiance_field,ray_origins,depth_values):
+  sigma_a = nn.functional.relu(radiance_field[...,3])
+  rgb = torch.sigmoid(radiance_field[...,:3])
+  one_e_10 = torch.tensor([1e10],dtype=ray_origins.dtype, device=ray_origins.device)
+  dists = torch.cat((depth_values[...,1:] - depth_values[..., :1],
+  one_e_10.expand(depth_values[..., :1].shape)),dim=1)
+  alpha = 1. - torch.exp(-sigma_a*dists)
+  weights = alpha * cumprod(1. - alpha + 1e-10)
+  rgb_map = (weights[...,None]*rgb).sum(dim=-2)
+  depth_map = (weights * depth_values).sum(dim=-1)
+  acc__map  = weights.sum(-1)
+  return rgb_map, depth_map, acc__map
 
 def pos_encoding(tensor,num_functions,include_input = True,log_sample=True):
   encoding = [tensor] if include_input else []
