@@ -1,10 +1,14 @@
 from torch.utils.data import Dataset, DataLoader
+from glob import glob
 
+train_path = glob("./generated_views/*.png")
 class DatasetPro(Dataset):
-    def __init__(self,folder,transform=None):
+    def __init__(self,train_path,json_filename,transform=None):
         self.transform = transform
-        pass
+        self.directory = train_path
+        self.json_filename = json_filename
     def __len__(self):
-        pass
+        len(self.directory)
     def __getitem__(self,i):
-        pass
+        image = self.directory[i]
+        return image
