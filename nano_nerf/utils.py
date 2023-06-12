@@ -50,7 +50,7 @@ def render_volume(radiance_field,ray_origins,depth_values):
   acc__map  = weights.sum(-1)
   return rgb_map, depth_map, acc__map
 
-def pos_encoding(tensor,num_functions,include_input = True,log_sample=True):
+def pos_encoding(tensor,num_encoding_functions=6,include_input = True,log_sample=True):
   encoding = [tensor] if include_input else []
   if log_sample:
     frequency_bands = 2.0 ** torch.linspace(
