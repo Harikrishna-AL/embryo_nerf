@@ -4,11 +4,12 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 import numpy as np
 from PIL import Image
+import torch
 
 
 def tor_to_meshgrid(tensor1, tensor2):
     ii, jj = torch.meshgrid(tensor1, tensor2)
-    return ii.transpose(-1, -2), jj.transpose(-1, 2)
+    return ii.transpose(-1, -2), jj.transpose(-1, -2)
 
 
 def cunprod(tensor):
@@ -20,7 +21,7 @@ def cunprod(tensor):
 
 def compute_rays(height, width, focal_length, cam2world):
     x, y = tor_to_meshgrid(
-        torch.arrange(width).to(cam2world), torch.arrange(height).to(cam2world)
+        torch.arange(width).to(cam2world), torch.arange(height).to(cam2world)
     )
     directions = torch.stack(
         [

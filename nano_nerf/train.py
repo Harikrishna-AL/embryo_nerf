@@ -1,7 +1,7 @@
-from utils import (
+from nano_nerf.utils import (
     compute_rays,
     compute_query_points,
-    encoding_fun,
+    pos_encoding,
     get_batches,
     render_volume,
 )
