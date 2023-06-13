@@ -10,6 +10,7 @@ class NeRF(nn.Module):
         self.relu = nn.ReLU()
 
     def forward(self, x):
+        x = x.to(self.layer1.weight.dtype)
         x = self.relu(self.layer1(x))
         x = self.relu(self.layer2(x))
         out = self.layer3(x)

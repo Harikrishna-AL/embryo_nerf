@@ -23,6 +23,6 @@ def train_iter(
     radiance_field = torch.cat(predictions, dim=0)
     shape = list(query_points.shape[:-1]) + [4]
     radiance_field = torch.reshape(radiance_field, shape)
-    rgb_pred = render_volume(radiance_field, ray_origins, depth_values)
+    rgb_pred, _, _ = render_volume(radiance_field, ray_origins, depth_values)
 
     return rgb_pred

@@ -5,14 +5,14 @@ from OpenGL.GLU import *
 import numpy as np
 from PIL import Image
 import torch
-
+import torch.nn as nn
 
 def tor_to_meshgrid(tensor1, tensor2):
     ii, jj = torch.meshgrid(tensor1, tensor2)
     return ii.transpose(-1, -2), jj.transpose(-1, -2)
 
 
-def cunprod(tensor):
+def cumprod(tensor):
     cumprod = torch.cumprod(tensor, -1)
     cumprod = torch.roll(cumprod, 1, -1)
     cumprod[..., 0] = 1
@@ -28,9 +28,12 @@ def compute_rays(height, width, focal_length, cam2world):
             (x - width * 0.5) / focal_length,
             (y - height * 0.5) / focal_length,
             torch.ones_like(x),
-        ]
+        ],
+        dim = -1
     )
-    ray_directions = torch.sum(directions[..., None, :] * cam2world[:3, :3], dim=1)
+    directions = directions[..., None, :]
+    cam2world = cam2world[:, :, :3, :3].squeeze()
+    ray_directions = torch.sum(directions * cam2world, dim=-1)
     ray_origins = cam2world[:3, -1].expand(ray_directions.shape)
     return ray_directions, ray_origins
 
@@ -40,14 +43,14 @@ def compute_query_points(
 ):
     depth_values = torch.linspace(near, far, num_samples).to(ray_origins)
     if random:
-        shape = list(depth_values.shpae[:, -1]) + [num_samples]
+        shape = list(ray_origins.shape[:-1]) + [num_samples]
         depth_values = (
             depth_values
             + torch.rand(shape).to(ray_origins) * (far - near) / num_samples
         )
     query_points = (
         ray_origins[..., None, :]
-        + ray_directions[..., None, :] * depth_values[..., None, :]
+        + ray_directions[..., None, :] * depth_values[...,:,None]
     )
     return query_points, depth_values
 
@@ -58,10 +61,10 @@ def render_volume(radiance_field, ray_origins, depth_values):
     one_e_10 = torch.tensor([1e10], dtype=ray_origins.dtype, device=ray_origins.device)
     dists = torch.cat(
         (
-            depth_values[..., 1:] - depth_values[..., :1],
+            depth_values[..., 1:] - depth_values[..., :-1],
             one_e_10.expand(depth_values[..., :1].shape),
         ),
-        dim=1,
+        dim=-1,
     )
     alpha = 1.0 - torch.exp(-sigma_a * dists)
     weights = alpha * cumprod(1.0 - alpha + 1e-10)

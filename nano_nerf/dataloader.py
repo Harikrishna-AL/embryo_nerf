@@ -35,7 +35,7 @@ transform_img = transforms.Compose(
     [
         # transforms.Grayscale(),
         transforms.ToTensor(),
-        transforms.Resize((64, 128)),
+        transforms.Resize((100, 100)),
         transforms.Lambda(lambda t: (t * 2) - 1),
     ]
 )
@@ -46,7 +46,7 @@ transform_matrix = transforms.Compose(
     ]
 )
 
-BATCH_SIZE = 2
+BATCH_SIZE = 1
 train_path = glob("./generated_views/*.png")
 train_data = DatasetPro(
     train_path, transform_img=transform_img, transform_matrix=transform_matrix

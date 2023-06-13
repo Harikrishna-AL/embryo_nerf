@@ -11,7 +11,7 @@ from nano_nerf.utils import pos_encoding
 
 encode = lambda x: pos_encoding(x)
 depth_samples_per_ray = 32
-focal = 0
+focal = 113
 
 
 def train_nerf(dataloader, epochs):
@@ -32,12 +32,10 @@ def train_nerf(dataloader, epochs):
                 encode,
                 model,
             )
-            loss = criterion(img, pred)
+            img = img.reshape([100,100,3])
+            loss = criterion(img.double(), pred.double())
             loss.backward()
             optimizer.step()
-            """
-            to implement the rest
-            """
     pass
 
 
