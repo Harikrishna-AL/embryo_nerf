@@ -7,6 +7,7 @@ from PIL import Image
 import torch
 import torch.nn as nn
 
+
 def tor_to_meshgrid(tensor1, tensor2):
     ii, jj = torch.meshgrid(tensor1, tensor2)
     return ii.transpose(-1, -2), jj.transpose(-1, -2)
@@ -29,7 +30,7 @@ def compute_rays(height, width, focal_length, cam2world):
             (y - height * 0.5) / focal_length,
             torch.ones_like(x),
         ],
-        dim = -1
+        dim=-1,
     )
     directions = directions[..., None, :]
     cam2world = cam2world[:, :, :3, :3].squeeze()
@@ -50,7 +51,7 @@ def compute_query_points(
         )
     query_points = (
         ray_origins[..., None, :]
-        + ray_directions[..., None, :] * depth_values[...,:,None]
+        + ray_directions[..., None, :] * depth_values[..., :, None]
     )
     return query_points, depth_values
 

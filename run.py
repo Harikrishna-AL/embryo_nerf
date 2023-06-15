@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 from nano_nerf import train
 from nano_nerf.utils import pos_encoding
+import matplotlib.pylab as plt
 
 # from glob import glob
 # from torchvision import transforms
@@ -32,11 +33,11 @@ def train_nerf(dataloader, epochs):
                 encode,
                 model,
             )
-            img = img.reshape([100,100,3])
+            img = img.reshape([100, 100, 3])
             loss = criterion(img.double(), pred.double())
             loss.backward()
             optimizer.step()
-    pass
+        plt.imshow(pred.detach().cpu().numpy())
 
 
 if __name__ == "__main__":

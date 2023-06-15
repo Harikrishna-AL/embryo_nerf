@@ -5,6 +5,7 @@ from nano_nerf.utils import (
     get_batches,
     render_volume,
 )
+import torch
 
 
 def train_iter(
@@ -14,8 +15,8 @@ def train_iter(
     query_points, depth_values = compute_query_points(
         ray_origins, ray_directions, near, far, samples
     )
-    query_points = query_points.reshape((-1, 3))
-    encoded_points = encoding_fun(query_points)
+    query_points_flattened = query_points.reshape((-1, 3))
+    encoded_points = encoding_fun(query_points_flattened)
     batches = get_batches(encoded_points)
     predictions = []
     for batch in batches:
