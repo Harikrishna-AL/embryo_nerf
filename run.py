@@ -6,6 +6,7 @@ import torch.nn as nn
 from nano_nerf import train
 from nano_nerf.utils import pos_encoding
 import matplotlib.pylab as plt
+from IPython.display import clear_output
 
 # from glob import glob
 # from torchvision import transforms
@@ -15,12 +16,13 @@ depth_samples_per_ray = 32
 focal = 113
 
 
-def train_nerf(dataloader, epochs):
+def train_nerf(Dataloader, epochs):
     model = nerf.NeRF()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     criterion = nn.MSELoss()
+    loss_values = []
     for epoch in range(epochs):
-        for img, trans in tqdm(dataloader):
+        for img, trans in tqdm(Dataloader):
             optimizer.zero_grad()
             pred = train.train_iter(
                 img.shape[-1],
@@ -37,7 +39,13 @@ def train_nerf(dataloader, epochs):
             loss = criterion(img.double(), pred.double())
             loss.backward()
             optimizer.step()
-        plt.imshow(pred.detach().cpu().numpy())
+        pred_output = dataloader.show_image(pred.reshape([3, 100, 100]))
+        loss_values.append(loss.item())
+        clear_output(wait=True)
+        plt.plot(loss_values)
+        plt.legend()
+        plt.show()
+        # plt.imshow(pred_output)
 
 
 if __name__ == "__main__":

@@ -46,6 +46,23 @@ transform_matrix = transforms.Compose(
     ]
 )
 
+
+def show_image(image):
+    reverse_transforms = transforms.Compose(
+        [
+            transforms.Lambda(lambda t: (t + 1) / 2),
+            transforms.Lambda(lambda t: t.permute(1, 2, 0)),  # CHW to HWC
+            transforms.Lambda(lambda t: t * 255.0),
+            transforms.Lambda(lambda t: t.detach().numpy().astype(np.uint8)),
+            transforms.ToPILImage(),
+        ]
+    )
+
+    if len(image.shape) == 4:
+        image = image[0, :, :, :]
+    return reverse_transforms(image)
+
+
 BATCH_SIZE = 1
 train_path = glob("./generated_views/*.png")
 train_data = DatasetPro(
