@@ -22,7 +22,7 @@ def train_nerf(Dataloader, epochs):
     criterion = nn.MSELoss()
     loss_values = []
     for epoch in range(epochs):
-        for img, trans in tqdm(Dataloader):
+        for idx, (img, trans) in enumerate(Dataloader):
             optimizer.zero_grad()
             pred = train.train_iter(
                 img.shape[-1],
