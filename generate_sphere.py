@@ -7,20 +7,24 @@ sphere = pv.Sphere(radius=1)
 plotter = pv.Plotter()
 plotter.add_mesh(sphere, color="white")
 
-positions = [
-    [0, 5 / math.sqrt(2), -5 / math.sqrt(2)],  # front view
-    [0, 5, 0],  # top view
-    [5, 0, 0],  # right view
-    [-5 / math.sqrt(2), 0, 5 / math.sqrt(2)],  # back view
-    [0, -5, 0],  # bottom view
-    [-5, 0, 0],  # left view
-]
+
+def circle_xy(init_angle, end_angle, radius, num_samples):
+    angles = np.linspace(init_angle, end_angle, num_samples)
+    x = np.cos(angles) * radius
+    y = np.sin(angles) * radius
+    pos = np.array([x, y, np.zeros_like(x)])
+    pos = pos.transpose()
+    return pos
 
 
-def data_to_json(dict):
+def data_to_json(dict, idx, last_idx):
     json_object = json.dumps(dict, indent=4)
-    with open("sphere_data.json", "a") as outfile:
-        outfile.write(json_object + ",\n")
+    if idx != last_idx:
+        with open("sphere_data.json", "a") as outfile:
+            outfile.write('"' + str(idx + 1) + '"' + ":" + json_object + ",\n")
+    else:
+        with open("sphere_data.json", "a") as outfile:
+            outfile.write('"' + str(idx + 1) + '"' + ":" + json_object + "\n")
 
 
 def arr_to_4by4(arr):
@@ -34,6 +38,11 @@ def arr_to_4by4(arr):
     )
 
 
+positions = circle_xy(0, 2 * np.pi, 5, 100)
+
+with open("sphere_data.json", "w") as outfile:
+    outfile.write("{\n")
+
 for i, pos in enumerate(positions):
     plotter.camera.position = pos
     camera = plotter.camera
@@ -45,8 +54,11 @@ for i, pos in enumerate(positions):
         interactive_update=True,
     )
     trans_matrix_list = []
-    for i in range(4):
+    for k in range(4):
         for j in range(4):
-            trans_matrix_list.append(trans_matrix.GetElement(i, j))
+            trans_matrix_list.append(trans_matrix.GetElement(k, j))
     trans_matrix_list = arr_to_4by4(trans_matrix_list)
-    data_to_json(trans_matrix_list.tolist())
+    data_to_json(trans_matrix_list.tolist(), i, len(positions) - 1)
+
+with open("sphere_data.json", "a") as outfile:
+    outfile.write("}")
