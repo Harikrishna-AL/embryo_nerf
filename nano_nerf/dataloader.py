@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from glob import glob
 from torchvision import transforms
 import numpy as np
+import re
 
 file = open("./sphere_data.json")
 data = json.load(file)
@@ -21,7 +22,8 @@ class DatasetPro(Dataset):
 
     def __getitem__(self, i):
         image_path = self.directory[i]
-        json_index = image_path[-5]
+        json_index = re.findall("[0-9]+", image_path)
+        json_index = int(json_index[0])
         trans_matrix = np.array(data[json_index])
         img = plt.imread(image_path)
         if self.transform_img:
