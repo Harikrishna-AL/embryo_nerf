@@ -23,7 +23,7 @@ class DatasetPro(Dataset):
     def __getitem__(self, i):
         image_path = self.directory[i]
         json_index = re.findall("[0-9]+", image_path)
-        json_index = int(json_index[0])
+        json_index = str(json_index[0])
         trans_matrix = np.array(data[json_index])
         img = plt.imread(image_path)
         if self.transform_img:

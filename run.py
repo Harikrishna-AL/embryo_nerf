@@ -42,10 +42,13 @@ def train_nerf(Dataloader, epochs):
         pred_output = dataloader.show_image(pred.reshape([3, 100, 100]))
         loss_values.append(loss.item())
         clear_output(wait=True)
-        plt.plot(loss_values)
-        plt.legend()
-        plt.show()
+        # plt.plot(loss_values)
+        # plt.legend()
+        # plt.show()
         # plt.imshow(pred_output)
+    plt.plot(loss_values)
+    plt.legend()
+    plt.savefig("loss" + str(epochs) + ".png")
 
 
 if __name__ == "__main__":
