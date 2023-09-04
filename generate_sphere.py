@@ -8,8 +8,11 @@ plotter = pv.Plotter()
 plotter.add_mesh(sphere, color="white")
 
 
-def circle_xy(init_angle, end_angle, radius, num_samples):
-    angles = np.linspace(init_angle, end_angle, num_samples)
+def circle_xy(init_angle, end_angle, radius, num_samples, arr=[]):
+    if arr == []:
+        angles = np.linspace(init_angle, end_angle, num_samples)
+    else:
+        angles = arr
     x = np.cos(angles) * radius
     y = np.sin(angles) * radius
     pos = np.array([x, y, np.zeros_like(x)])
@@ -20,10 +23,10 @@ def circle_xy(init_angle, end_angle, radius, num_samples):
 def data_to_json(dict, idx, last_idx):
     json_object = json.dumps(dict, indent=4)
     if idx != last_idx:
-        with open("sphere_data.json", "a") as outfile:
+        with open("embryo_data.json", "a") as outfile:
             outfile.write('"' + str(idx + 1) + '"' + ":" + json_object + ",\n")
     else:
-        with open("sphere_data.json", "a") as outfile:
+        with open("embryo_data.json", "a") as outfile:
             outfile.write('"' + str(idx + 1) + '"' + ":" + json_object + "\n")
 
 
@@ -38,9 +41,11 @@ def arr_to_4by4(arr):
     )
 
 
-positions = circle_xy(0, 2 * np.pi, 5, 100)
+positions = circle_xy(
+    0, 2 * np.pi, 5, 100, arr=[0, np.pi / 4, np.pi / 2, 3 * np.pi / 4, np.pi]
+)
 
-with open("sphere_data.json", "w") as outfile:
+with open("embryo_data.json", "w") as outfile:
     outfile.write("{\n")
 
 for i, pos in enumerate(positions):
@@ -50,7 +55,7 @@ for i, pos in enumerate(positions):
     print(trans_matrix)
     plotter.show(
         title=f"View {i+1}",
-        screenshot=f"./generated_views/view{i+1}.png",
+        screenshot=f"./test_views/view{i+1}.png",
         interactive_update=True,
     )
     trans_matrix_list = []
@@ -60,5 +65,5 @@ for i, pos in enumerate(positions):
     trans_matrix_list = arr_to_4by4(trans_matrix_list)
     data_to_json(trans_matrix_list.tolist(), i, len(positions) - 1)
 
-with open("sphere_data.json", "a") as outfile:
+with open("embryo_data.json", "a") as outfile:
     outfile.write("}")
