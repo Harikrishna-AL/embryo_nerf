@@ -6,3 +6,21 @@ Embryo NeRF is an implementation of nano NeRF that will be 3D reconstructing mic
 # Training 🛠️
 
 # Fine Tuning 🪛
+
+# Dataset 📁
+At the moment the dataset consists of 5 microscopic embryo images. The embryo_data.json file consists fo the corresponding camera parameters for each image. Here is how the visuaized data!
+<div style="">
+<img src="./assets/embryo_nerf_dataset.png">
+</div>
+
+# Inference 📊
+The following is the inference of the model on the above dataset. The model was trained for 50 iterations and the following is the result.
+Here are some example of the generated image view and it's corresponding depth map.
+
+<div>
+<img src="./assets/embryo_nerf_results.png">
+<img src="./assets/embryo_nerf_results1.png">
+<img src="./assets/embryo_nerf_results2.png">
+</div>
+
+
